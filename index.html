@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SC2 Torneo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F0;color:#2C2C2A;padding:1rem;max-width:820px;margin:0 auto}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #E0DDD5}
+.hdr-title{font-size:18px;font-weight:600}
+.hdr-sub{font-size:12px;color:#777;margin-top:2px}
+.tabs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:1.5rem;background:#ECEAE4;border-radius:10px;padding:4px}
+.tab{padding:9px 4px;border:none;background:transparent;cursor:pointer;border-radius:7px;font-size:12px;font-weight:400;color:#777;transition:all .15s;text-align:center;white-space:nowrap}
+.tab.active{background:#fff;color:#2C2C2A;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab:hover:not(.active){background:rgba(255,255,255,.5)}
+.card{background:#fff;border:1px solid #E0DDD5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.card-title{font-size:14px;font-weight:600;margin-bottom:1rem}
+.fi{display:block;width:100%;padding:8px 10px;border:1px solid #D5D2CA;border-radius:8px;font-size:13px;background:#F5F4F0;color:#2C2C2A;outline:none}
+.fi:focus{border-color:#2C2C2A}
+.btn{padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .15s;border:1px solid #D5D2CA;background:#fff;color:#2C2C2A;font-family:inherit}
+.btn:hover:not(:disabled){background:#F5F4F0}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-g{background:#EAF3DE;border-color:#639922;color:#3B6D11;font-weight:600}
+.btn-g:hover:not(:disabled){background:#C0DD97}
+.btn-p{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:600}
+.btn-p:hover:not(:disabled){background:#CECBF6}
+.btn-b{background:#E6F1FB;border-color:#378ADD;color:#0C447C;font-weight:600}
+.btn-b:hover:not(:disabled){background:#B5D4F4}
+.btn-r{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D;font-weight:600}
+.btn-r:hover:not(:disabled){background:#F7C1C1}
+.badge{font-size:11px;padding:2px 7px;border-radius:6px;display:inline-block;font-weight:500}
+.c-gold{background:#FAEEDA;color:#633806}.c-silver{background:#F1EFE8;color:#444441}.c-bronze{background:#FAECE7;color:#712B13}
+.c-green{background:#EAF3DE;color:#3B6D11}.c-red{background:#FCEBEB;color:#A32D2D}.c-purple{background:#EEEDFE;color:#3C3489}
+.c-blue{background:#E6F1FB;color:#0C447C}.c-amber{background:#FAEEDA;color:#854F0B}
+.alert{padding:8px 12px;border-radius:8px;font-size:12px;margin-bottom:10px;border:1px solid}
+.a-ok{background:#EAF3DE;color:#3B6D11;border-color:#639922}
+.a-err{background:#FCEBEB;color:#A32D2D;border-color:#E24B4A}
+.a-info{background:#E6F1FB;color:#0C447C;border-color:#378ADD}
+.a-warn{background:#FAEEDA;color:#854F0B;border-color:#EF9F27}
+.st-table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.st-table th{text-align:left;padding:6px 8px;font-size:11px;font-weight:600;color:#777;border-bottom:1px solid #E0DDD5}
+.st-table th.r,.st-table td.r{text-align:right}
+.st-table td{padding:7px 8px;border-bottom:1px solid #E0DDD5;color:#2C2C2A}
+.st-table tr:last-child td{border-bottom:none}
+.pr:hover{background:#F5F4F0}
+.r-fin{background:#EEEDFE}.r-fin:hover{background:#CECBF6}
+.r-up{background:#EAF3DE}.r-up:hover{background:#C0DD97}
+.r-dn{background:#FCEBEB}.r-dn:hover{background:#F7C1C1}
+.r-pl{background:#E6F1FB}.r-pl:hover{background:#B5D4F4}
+.leg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:#777}
+.leg-d{width:10px;height:10px;border-radius:2px}
+.sbox{width:44px;text-align:center;padding:7px 4px;border:1px solid #D5D2CA;border-radius:8px;font-size:14px;font-weight:600;background:#F5F4F0;color:#2C2C2A;outline:none;font-family:inherit}
+.match-row{display:grid;grid-template-columns:1fr 52px 44px 1fr 36px;align-items:center;padding:7px 10px;font-size:13px}
+.match-row:hover{background:#F5F4F0}
+.match-card{border:1px solid #E0DDD5;border-radius:8px;margin-bottom:4px;overflow:hidden;background:#fff}
+.mc-score{font-weight:600;text-align:center}
+.mc-div{font-size:10px;color:#aaa;text-align:center}
+.mc-win{font-size:11px;color:#3B6D11;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-act{text-align:right}
+.btn-edit{padding:3px 7px;font-size:10px;border-radius:5px;cursor:pointer;border:1px solid #D5D2CA;background:#fff;color:#777;transition:all .15s;white-space:nowrap;font-family:inherit}
+.btn-edit:hover{background:#F5F4F0}.btn-edit.active{background:#EEEDFE;border-color:#7F77DD;color:#3C3489}
+.mlog-hdr{display:grid;grid-template-columns:1fr 52px 44px 1fr 36px;padding:4px 10px;border-bottom:1px solid #E0DDD5;margin-bottom:3px}
+.mlog-hdr span{font-size:10px;font-weight:600;color:#777}.mlog-hdr .ch{text-align:center}.mlog-hdr .cr{text-align:right}
+.edit-panel{background:#F5F4F0;padding:12px;border-top:1px solid #E0DDD5}
+.edit-sbox{width:44px;text-align:center;padding:6px 4px;border:1px solid #D5D2CA;border-radius:6px;font-size:15px;font-weight:600;background:#fff;color:#2C2C2A;outline:none;font-family:inherit}
+.btn-xs{padding:5px 10px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid #D5D2CA;background:#fff;color:#2C2C2A;transition:all .15s;display:inline-block;font-family:inherit}
+.btn-xs:hover{background:#F5F4F0}
+.btn-xs-g{background:#EAF3DE;border-color:#639922;color:#3B6D11;font-weight:600}.btn-xs-g:hover{background:#C0DD97}
+.btn-xs-r{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D;font-weight:600}.btn-xs-r:hover{background:#F7C1C1}
+.phase-hero{border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;border:1.5px solid}
+.phase-hero-title{font-size:18px;font-weight:700;line-height:1.2;margin-bottom:3px}
+.phase-content{border:1px solid #E0DDD5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;background:#fff}
+.rblock{background:#F5F4F0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cierre-box{border:1px solid #E0DDD5;border-radius:12px;overflow:hidden;margin-bottom:1rem}
+.cierre-hdr{padding:14px 16px;background:#2C2C2A;display:flex;align-items:center;gap:12px}
+.cierre-hdr-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cierre-hdr-title{font-size:17px;font-weight:700;color:#F1EFE8;line-height:1.2}
+.cierre-hdr-sub{font-size:12px;color:#B4B2A9;margin-top:2px}
+.cierre-body{padding:1rem 1.25rem;background:#fff}
+.pb-wrap{background:#ECEAE4;border-radius:6px;height:5px;flex:1;overflow:hidden}
+.pb{height:5px;border-radius:6px;background:#639922;transition:width .3s}
+.pitem{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#fff;border-radius:6px;margin-bottom:5px;font-size:13px;border:1px solid #E0DDD5}
+.rm-btn{background:none;border:none;cursor:pointer;color:#aaa;font-size:14px;padding:0 3px}.rm-btn:hover{color:#E24B4A}
+.sc{background:#ECEAE4;border-radius:8px;padding:12px}
+.sc-l{font-size:12px;color:#777;margin-bottom:4px}
+.sc-v{font-size:20px;font-weight:600}
+.hs-item{border:1px solid #E0DDD5;border-radius:12px;overflow:hidden;margin-bottom:10px}
+.hs-hdr{padding:10px 14px;background:#F5F4F0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:600;user-select:none}
+.hs-body{display:none;padding:14px;background:#fff}.hs-body.open{display:block}
+.div-sep{font-size:11px;font-weight:600;color:#777;padding:6px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.empty-history{display:flex;flex-direction:column;align-items:center;padding:3rem 1rem;text-align:center;color:#777}
+/* Calendar weeks */
+.cal-week{border-radius:10px;margin-bottom:8px;overflow:hidden;border:1px solid #E0DDD5;background:#fff}
+.cal-week.done{border-color:#639922;border-width:2px}
+.cal-week-hdr{padding:10px 14px;background:#F5F4F0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.cal-week.done .cal-week-hdr{background:#EAF3DE}
+.cal-week-title{font-size:13px;font-weight:600}
+.cal-week.done .cal-week-title{color:#3B6D11}
+.cal-week-body{display:none;padding:10px 14px}.cal-week-body.open{display:block}
+.cal-match{display:flex;align-items:center;padding:8px 10px;border-radius:7px;margin-bottom:4px;font-size:13px;background:#F5F4F0;gap:6px}
+.cal-match:last-child{margin-bottom:0}
+.cal-match-played{background:#EAF3DE}
+.cal-badge-played{font-size:10px;padding:2px 8px;border-radius:4px;background:#C0DD97;color:#2A5A08;font-weight:600}
+.cal-badge-pending{font-size:10px;padding:2px 8px;border-radius:4px;background:#ECEAE4;color:#888}
+/* BIG division buttons */
+.big-div-btn{flex:1;padding:14px 8px;border-radius:12px;border:2px solid #E0DDD5;background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:#777;transition:all .18s;text-align:center;position:relative;font-family:inherit}
+.big-div-btn:hover{border-color:#B0ADA3;background:#F5F4F0}
+.big-div-btn.active-1{background:#FAEEDA;border-color:#C4831A;color:#633806;font-weight:700;box-shadow:0 0 0 3px rgba(196,131,26,.2)}
+.big-div-btn.active-2{background:#ECEAE4;border-color:#555;color:#2C2C2A;font-weight:700;box-shadow:0 0 0 3px rgba(80,80,80,.18)}
+.big-div-btn.active-3{background:#FAECE7;border-color:#C05C3A;color:#712B13;font-weight:700;box-shadow:0 0 0 3px rgba(192,92,58,.2)}
+.big-div-btn .div-emoji{font-size:22px;display:block;margin-bottom:5px}
+.div-indicator{display:none;font-size:10px;font-weight:700;margin-top:5px;opacity:.8}
+.big-div-btn.active-1 .div-indicator,.big-div-btn.active-2 .div-indicator,.big-div-btn.active-3 .div-indicator{display:block}
+.viewing-banner{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;border:1.5px solid}
+.vb-1{background:#FAEEDA;color:#633806;border-color:#C4831A}
+.vb-2{background:#ECEAE4;color:#2C2C2A;border-color:#888}
+.vb-3{background:#FAECE7;color:#712B13;border-color:#C05C3A}
+
+.cal-match-name{flex:1;font-size:13px}
+.cal-match-score{width:40px;text-align:center;font-size:12px;font-weight:600;color:#3B6D11;flex-shrink:0}
+.cal-match-badge{width:76px;text-align:right;flex-shrink:0}
+
+.cal-match>span:nth-child(1){flex:1}
+.cal-match>span:nth-child(2){min-width:40px;width:40px;text-align:center;font-size:12px;font-weight:600;color:#3B6D11;flex-shrink:0}
+.cal-match>span:nth-child(3){min-width:76px;width:76px;text-align:right;flex-shrink:0}
+
+.phase-hero{border-radius:12px 12px 0 0 !important;margin-bottom:0 !important;border-bottom:none !important}
+.playoff-card-purple .phase-hero{border-bottom:2px solid #AFA9EC !important}
+.playoff-card-blue .phase-hero{border-bottom:2px solid #85B7EB !important}
+.phase-content{border-radius:0 0 12px 12px !important;border-top:none !important;margin-bottom:1.5rem !important}
+/* Bo7 phase-content - purple tinted */
+.playoff-card-purple .phase-content{background:#F4F3FE;border-color:#AFA9EC !important;border-width:1.5px !important}
+/* Bo3 phase-content - blue tinted */
+.playoff-card-blue .phase-content{background:#EBF4FD;border-color:#85B7EB !important;border-width:1.5px !important}
+/* Score inputs inside playoff sections - bigger and bolder */
+.playoff-card .sbox{font-size:22px;font-weight:700;width:54px;padding:10px 4px;background:#fff}
+/* Player name labels in playoff */
+.playoff-card .phase-content>div:first-child{font-size:14px;font-weight:600;color:#2C2C2A;margin-bottom:12px}
+.playoff-progress{border-radius:0 0 12px 12px;padding:12px 16px;border:1.5px solid;border-top:none;margin-bottom:1.5rem}
+.playoff-progress-purple{background:#E8E6F8;border-color:#AFA9EC}
+.playoff-progress-blue{background:#DFF0FB;border-color:#85B7EB}
+
+.edit-season-panel{background:#F5F4F0;border-top:1px solid #E0DDD5;padding:14px}
+.edit-season-panel label{font-size:11px;color:#777;display:block;margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.edit-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.edit-tag{font-size:11px;padding:2px 6px;border-radius:4px;background:#E0DDD5;color:#555}
+.btn-edit-season{padding:4px 10px;font-size:11px;border-radius:6px;cursor:pointer;border:1px solid #D5D2CA;background:#fff;color:#555;font-family:inherit;transition:all .15s}
+.btn-edit-season:hover{background:#F5F4F0;color:#2C2C2A}
+.btn-edit-season.active{background:#EEEDFE;border-color:#7F77DD;color:#3C3489}
+
+#login-screen{position:fixed;inset:0;background:#F5F4F0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;z-index:9999}
+#login-screen.hidden{display:none}
+.login-box{background:#fff;border:1px solid #E0DDD5;border-radius:16px;padding:2rem 1.5rem;width:100%;max-width:340px;text-align:center}
+.login-logo{font-size:36px;margin-bottom:8px}
+.login-title{font-size:20px;font-weight:700;color:#2C2C2A;margin-bottom:4px}
+.login-sub{font-size:13px;color:#777;margin-bottom:1.5rem}
+.login-divider{display:flex;align-items:center;gap:10px;margin:1.25rem 0;color:#aaa;font-size:12px}
+.login-divider::before,.login-divider::after{content:"";flex:1;height:1px;background:#E0DDD5}
+.role-btn{width:100%;padding:12px;border-radius:10px;border:1.5px solid #E0DDD5;background:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;font-family:inherit;transition:all .15s;color:#2C2C2A}
+.role-btn:hover{background:#F5F4F0;border-color:#B0ADA3}
+.role-btn-player{background:#EAF3DE;border-color:#639922;color:#3B6D11}
+.role-btn-player:hover{background:#C0DD97}
+.admin-form{margin-top:1rem;text-align:left}
+.admin-form label{font-size:11px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
+.admin-form input{width:100%;padding:9px 12px;border:1px solid #D5D2CA;border-radius:8px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px;background:#F5F4F0;color:#2C2C2A}
+.admin-form input:focus{border-color:#2C2C2A;background:#fff}
+#login-err{font-size:12px;color:#A32D2D;margin-bottom:8px;min-height:18px;text-align:center}
+.role-badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid;cursor:pointer;transition:all .15s}
+.role-badge-admin{background:#EEEDFE;border-color:#7F77DD;color:#3C3489}
+.role-badge-player{background:#EAF3DE;border-color:#639922;color:#3B6D11}
+.role-badge:hover{opacity:.8}
+
+.scroll-hint{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(44,44,42,0.75);
+  color:#fff;
+  font-size:12px;
+  font-weight:500;
+  padding:6px 14px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  pointer-events:none;
+  z-index:500;
+  opacity:1;
+  transition:opacity .4s;
+  backdrop-filter:blur(4px);
+}
+.scroll-hint.hidden{opacity:0;}
+.scroll-arrow{
+  display:inline-block;
+  animation:bounceDown .9s infinite;
+}
+@keyframes bounceDown{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(4px)}
+}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🏆</div>
+    <div class="login-title">SC2 Torneo</div>
+    <div class="login-sub">¿Cómo querés ingresar?</div>
+    <button class="role-btn role-btn-player" onclick="loginPlayer()">🎮 Ingresar como Jugador</button>
+    <div class="login-divider">o ingresá como admin</div>
+    <div class="admin-form">
+      <label>Usuario</label>
+      <input type="text" id="admin-user" placeholder="Usuario" autocomplete="username">
+      <label>Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()">
+      <div id="login-err"></div>
+      <button class="role-btn" style="margin-bottom:0" onclick="loginAdmin()">🔐 Ingresar como Admin</button>
+    </div>
+  </div>
+</div>
+<div class="hdr">
+  <div>
+    <div class="hdr-title">SC2 Torneo</div>
+    <div class="hdr-sub" id="season-label">Temporada 1 en curso</div>
+    <div id="sync-indicator" style="font-size:10px;color:#3B6D11;margin-top:1px"></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div id="season-badge"></div>
+    <div id="role-badge-container"></div>
+  </div>
+</div>
+
+<div class="tabs-grid">
+  <button class="tab active" id="tab-btn-standings" onclick="showTab('standings')">Posiciones</button>
+  <button class="tab" id="tab-btn-report" onclick="showTab('report')">Reportar</button>
+  <button class="tab" id="tab-btn-playoffs" onclick="showTab('playoffs')">Playoffs / Cierre</button>
+  <button class="tab" id="tab-btn-calendar" onclick="showTab('calendar')">Calendario</button>
+  <button class="tab" id="tab-btn-players" onclick="showTab('players')">Jugadores</button>
+  <button class="tab" id="tab-btn-history" onclick="showTab('history')">Temporadas</button>
+  <button class="tab" id="tab-btn-rules" onclick="showTab('rules')">Reglas</button>
+  <div></div>
+</div>
+
+<!-- POSICIONES -->
+<div id="tab-standings">
+  <div class="leg">
+    <div class="leg-i"><div class="leg-d" style="background:#AFA9EC"></div>Final Bo7</div>
+    <div class="leg-i"><div class="leg-d" style="background:#97C459"></div>Sube</div>
+    <div class="leg-i"><div class="leg-d" style="background:#F09595"></div>Baja</div>
+    <div class="leg-i"><div class="leg-d" style="background:#85B7EB"></div>Playoff Bo3</div>
+  </div>
+  <div id="all-standings"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem">
+    <button class="btn" onclick="exportCSV()">Exportar CSV</button>
+    <button class="btn" onclick="exportJSON()">Exportar JSON</button>
+  </div>
+</div>
+
+<!-- REPORTAR -->
+<div id="tab-report" style="display:none">
+  <div class="card">
+    <div class="card-title">Registrar partida de temporada</div>
+    <div id="report-alert"></div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:12px;color:#777;display:block;margin-bottom:4px">División</label>
+      <select id="match-div" class="fi" onchange="updateSelects()">
+        <option value="">— Seleccionar —</option>
+        <option value="1">División 1</option>
+        <option value="2">División 2</option>
+        <option value="3">División 3</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;margin-bottom:10px;align-items:end">
+      <div>
+        <label style="font-size:12px;color:#777;display:block;margin-bottom:4px">Jugador 1</label>
+        <select id="player1" class="fi" onchange="syncSelects()"><option value="">—</option></select>
+      </div>
+      <div style="padding-bottom:9px;font-size:12px;color:#777;font-weight:600;text-align:center">vs</div>
+      <div>
+        <label style="font-size:12px;color:#777;display:block;margin-bottom:4px">Jugador 2</label>
+        <select id="player2" class="fi" onchange="syncSelects()"><option value="">—</option></select>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;color:#777;display:block;margin-bottom:6px">Mapas ganados (Bo3) <span style="font-size:11px;color:#aaa">— dejá 0-0 si no se coordinó</span></label>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="sp1" style="font-size:13px;min-width:70px;text-align:right;color:#777">J1</span>
+        <input type="number" id="score1" class="sbox" min="0" max="2" value="0">
+        <span style="font-size:13px;color:#777">–</span>
+        <input type="number" id="score2" class="sbox" min="0" max="2" value="0">
+        <span id="sp2" style="font-size:13px;min-width:70px;color:#777">J2</span>
+      </div>
+    </div>
+    <button class="btn btn-g" onclick="submitMatch()">Registrar partida</button>
+  </div>
+
+  <div id="mlog-outer" style="display:none">
+    <div style="font-size:14px;font-weight:700;margin-bottom:4px">Historial de partidas / Editar resultados</div>
+    <div style="font-size:12px;color:#777;margin-bottom:12px">Seleccioná una división para ver su historial</div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem">
+      <button class="big-div-btn" id="hchip-1" onclick="setHistDiv('1')">
+        <span class="div-emoji">🥇</span>División 1<div class="div-indicator">● Viendo</div>
+      </button>
+      <button class="big-div-btn" id="hchip-2" onclick="setHistDiv('2')">
+        <span class="div-emoji">🥈</span>División 2<div class="div-indicator">● Viendo</div>
+      </button>
+      <button class="big-div-btn" id="hchip-3" onclick="setHistDiv('3')">
+        <span class="div-emoji">🥉</span>División 3<div class="div-indicator">● Viendo</div>
+      </button>
+    </div>
+    <div id="mlog-rows"></div>
+  </div>
+</div>
+
+<!-- PLAYOFFS -->
+<div id="tab-playoffs" style="display:none">
+  <div id="playoff-alert"></div>
+  <div id="playoff-content"></div>
+</div>
+
+<!-- CALENDARIO -->
+<div id="tab-calendar" style="display:none">
+  <div id="calendar-content"></div>
+</div>
+
+<!-- JUGADORES -->
+<div id="tab-players" style="display:none">
+  <div class="card">
+    <div class="card-title">Agregar jugador</div>
+    <div id="players-locked-msg" style="display:none" class="alert a-info">El torneo ya comenzó. No se pueden agregar ni eliminar jugadores.</div>
+    <div id="players-add-form" class="admin-only">
+      <div style="display:grid;grid-template-columns:1fr 120px auto;gap:8px;align-items:end;margin-bottom:1rem">
+        <div>
+          <label style="font-size:12px;color:#777;display:block;margin-bottom:4px">Nombre</label>
+          <input type="text" id="new-name" class="fi" placeholder="Ej: NightHawk">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#777;display:block;margin-bottom:4px">División</label>
+          <select id="new-div" class="fi">
+            <option value="1">Div 1</option>
+            <option value="2">Div 2</option>
+            <option value="3">Div 3</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:transparent;display:block;margin-bottom:4px">.</label>
+          <button class="btn btn-g" onclick="addPlayer()">Agregar</button>
+        </div>
+      </div>
+      <div id="new-name-alert"></div>
+    </div>
+    <div id="player-list"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div class="sc"><div class="sc-l">Jugadores</div><div class="sc-v" id="stat-p">0</div></div>
+    <div class="sc"><div class="sc-l">Partidas</div><div class="sc-v" id="stat-m">0</div></div>
+    <div class="sc"><div class="sc-l">Mapas</div><div class="sc-v" id="stat-mp">0</div></div>
+  </div>
+</div>
+
+<!-- HISTORIAL -->
+<div id="tab-history" style="display:none"><div id="history-content"></div></div>
+
+<!-- REGLAS -->
+<div id="tab-rules" style="display:none">
+  <div class="card" style="font-size:13px;color:#555;line-height:1.9">
+    <div style="font-weight:700;color:#2C2C2A;margin-bottom:4px">Reglas generales</div>
+    Todos contra todos dentro de cada división. Partidas Bo3, cada mapa ganado = 1 punto. Desempate por H2H (resultado directo entre empatados).<br><br>
+    <div style="font-weight:700;color:#2C2C2A;margin-bottom:4px">Calendario semanal</div>
+    Cada jugador juega <strong style="color:#2C2C2A">2 Bo3 por semana</strong>. El calendario se genera al azar al iniciar el torneo. Una vez generado, no se pueden agregar más jugadores.<br><br>
+    <div style="font-weight:700;color:#2C2C2A;margin-bottom:4px">División 1</div>
+    Los 2 mejores juegan la gran final Bo7. Los 2 últimos bajan a División 2.<br><br>
+    <div style="font-weight:700;color:#2C2C2A;margin-bottom:4px">División 2</div>
+    Los 2 mejores suben a División 1. Los 2 últimos bajan a División 3.<br><br>
+    <div style="font-weight:700;color:#2C2C2A;margin-bottom:4px">División 3</div>
+    El 1er lugar sube directo a División 2. El 2do y 3er juegan playoff Bo3 — el ganador sube.
+  </div>
+</div>
+
+<script>
+const MIN_PLAYERS={"1":5,"2":5,"3":4};
+const ALL_TABS=["standings","report","playoffs","calendar","players","history","rules"];
+let S={players:[],matches:[],playoffs:{d3:{p1:null,p2:null,s1:0,s2:0,done:false},d1:{p1:null,p2:null,s1:0,s2:0,done:false}},closed:false,promotions:[],champion:null,nid:1,season:1,calendarGenerated:false,calendar:{"1":[],"2":[],"3":[]},calendarDiv:""};
+let history=[];
+let editingId=null,resetWarningStep=0,histDiv=null;
+const DL={"1":"Div 1","2":"Div 2","3":"Div 3"};
+const DIV_LABEL={"1":"División 1","2":"División 2","3":"División 3"};
+const DIV_EMOJI={"1":"🥇","2":"🥈","3":"🥉"};
+const pname=id=>(S.players.find(p=>p.id===id)||{name:"?"}).name;
+
+function sortedPlayers(){return[...S.players].sort((a,b)=>parseInt(a.div)-parseInt(b.div)||a.name.localeCompare(b.name))}
+function getH2H(pid,opp){let w=0;S.matches.forEach(m=>{if(m.p1===pid&&opp.includes(m.p2)&&m.s1>m.s2)w++;if(m.p2===pid&&opp.includes(m.p1)&&m.s2>m.s1)w++;});return w;}
+function getpts(pid){var pts=0,w=0,l=0,d=0,g=0;S.matches.forEach(function(m){var ns=m.s1===0&&m.s2===0;if(m.p1===pid){if(ns){d++;g++;}else{pts+=m.s1;if(m.s1>m.s2)w++;else l++;g++;}}if(m.p2===pid){if(ns){d++;g++;}else{pts+=m.s2;if(m.s2>m.s1)w++;else l++;g++;}}});return{pts:pts,wins:w,losses:l,draws:d,played:g};}
+function standings(div){
+  const pl=S.players.filter(p=>p.div===div).map(p=>({...p,...getpts(p.id)}));
+  pl.sort((a,b)=>{if(b.pts!==a.pts)return b.pts-a.pts;const tied=pl.filter(p=>p.pts===a.pts).map(p=>p.id);return getH2H(b.id,tied.filter(i=>i!==b.id))-getH2H(a.id,tied.filter(i=>i!==a.id))||b.wins-a.wins;});
+  return pl;
+}
+function totalM(div){const n=S.players.filter(p=>p.div===div).length;return n*(n-1)/2}
+function playedM(div){return S.matches.filter(m=>m.div===div).length}
+function divDone(div){const n=S.players.filter(p=>p.div===div).length;return n>=2&&playedM(div)>=totalM(div)}
+function rowCls(div,r,tot){if(div==="1"){if(r<=2)return"r-fin";if(r>=tot-1)return"r-dn"}if(div==="2"){if(r<=2)return"r-up";if(r>=tot-1)return"r-dn"}if(div==="3"){if(r===1)return"r-up";if(r===2||r===3)return"r-pl"}return""}
+function rowTag(div,r,tot){if(div==="1"){if(r<=2)return'<span class="badge c-purple">Final Bo7</span>';if(r>=tot-1)return'<span class="badge c-red">Baja</span>'}if(div==="2"){if(r<=2)return'<span class="badge c-green">Sube</span>';if(r>=tot-1)return'<span class="badge c-red">Baja</span>'}if(div==="3"){if(r===1)return'<span class="badge c-green">Sube directo</span>';if(r===2||r===3)return'<span class="badge c-blue">Playoff Bo3</span>'}return""}
+
+function renderStandings(){
+  const divs=[{id:"1",label:"División 1",bc:"c-gold"},{id:"2",label:"División 2",bc:"c-silver"},{id:"3",label:"División 3",bc:"c-bronze"}];
+  let h="";
+  divs.forEach(d=>{
+    const st=standings(d.id),tot=st.length,pl=playedM(d.id),tm=totalM(d.id),pct=tm>0?Math.round(pl/tm*100):0,done=divDone(d.id);
+    h+=`<div style="margin-bottom:1.5rem"><div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:6px">${d.label} <span class="badge ${d.bc}">${tot} jug.</span>${done?'<span class="badge c-green">Completa</span>':''}</div>`;
+    if(tm>0)h+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;color:#777;white-space:nowrap">${pl}/${tm} partidas</span><div style="background:#C8C5EC;border-radius:6px;height:5px;flex:1;overflow:hidden"><div style="height:5px;border-radius:6px;background:#7F77DD;width:${pct}%"></div></div><span style="font-size:11px;color:#777">${pct}%</span></div>`;
+    if(!tot){h+=`<div style="font-size:13px;color:#777">Sin jugadores.</div></div>`;return}
+    h+=`<table class="st-table"><colgroup><col style="width:24px"><col><col style="width:44px"><col style="width:38px"><col style="width:30px"><col style="width:26px"><col style="width:30px"><col style="width:100px"></colgroup><thead><tr><th>#</th><th>Jugador</th><th class="r">Pts</th><th class="r">PJ</th><th class="r">G</th><th class="r">E</th><th class="r">P</th><th class="r"></th></tr></thead><tbody>`;
+    st.forEach((p,i)=>{const r=i+1;h+='<tr class="pr '+rowCls(d.id,r,tot)+'"><td style="font-weight:600">'+r+'</td><td>'+p.name+'</td><td class="r" style="font-weight:600">'+p.pts+'</td><td class="r" style="color:#777">'+p.played+'</td><td class="r" style="color:#3B6D11">'+p.wins+'</td><td class="r" style="color:#888">'+( p.draws||0)+'</td><td class="r" style="color:#A32D2D">'+p.losses+'</td><td class="r">'+rowTag(d.id,r,tot)+'</td></tr>';});
+    h+=`</tbody></table></div>`;
+  });
+  document.getElementById("all-standings").innerHTML=h||'<div style="font-size:13px;color:#777">Agregá jugadores para comenzar.</div>';
+}
+
+function updateSelects(){
+  const div=document.getElementById("match-div").value;
+  const pl=S.players.filter(p=>p.div===div);
+  ["player1","player2"].forEach(id=>{const s=document.getElementById(id);s.innerHTML='<option value="">— Seleccionar —</option>';pl.forEach(p=>s.innerHTML+=`<option value="${p.id}">${p.name}</option>`);});
+  document.getElementById("sp1").textContent="J1";document.getElementById("sp2").textContent="J2";
+}
+function syncSelects(){
+  const div=document.getElementById("match-div").value;if(!div)return;
+  const pl=S.players.filter(p=>p.div===div);
+  const s1=document.getElementById("player1"),s2=document.getElementById("player2");
+  const cur1=s1.value,cur2=s2.value;
+  s1.innerHTML='<option value="">— Seleccionar —</option>';pl.forEach(p=>{if(!cur2||String(p.id)!==cur2)s1.innerHTML+=`<option value="${p.id}"${String(p.id)===cur1?" selected":""}>${p.name}</option>`;});
+  s2.innerHTML='<option value="">— Seleccionar —</option>';pl.forEach(p=>{if(!cur1||String(p.id)!==cur1)s2.innerHTML+=`<option value="${p.id}"${String(p.id)===cur2?" selected":""}>${p.name}</option>`;});
+  const p1=S.players.find(p=>String(p.id)===s1.value),p2=S.players.find(p=>String(p.id)===s2.value);
+  document.getElementById("sp1").textContent=p1?p1.name:"J1";document.getElementById("sp2").textContent=p2?p2.name:"J2";
+}
+
+function submitMatch(){
+  if(S.closed)return showAlert("report-alert","La temporada está cerrada.","a-err");
+  if(!S.calendarGenerated&&!isAdmin())return showAlert("report-alert","El calendario aún no ha sido generado. Solo el admin puede registrar partidas antes de que inicie el torneo.","a-err");
+  const div=document.getElementById("match-div").value,p1=parseInt(document.getElementById("player1").value),p2=parseInt(document.getElementById("player2").value);
+  const s1=parseInt(document.getElementById("score1").value)||0,s2=parseInt(document.getElementById("score2").value)||0;
+  if(!div)return showAlert("report-alert","Seleccioná la división.","a-err");
+  if(!p1||!p2)return showAlert("report-alert","Seleccioná ambos jugadores.","a-err");
+  if(p1===p2)return showAlert("report-alert","Mismo jugador dos veces.","a-err");
+  if(s1>2||s2>2)return showAlert("report-alert","Máximo 2 mapas en Bo3.","a-err");
+  // 0-0 is allowed (no show / couldn't coordinate)
+  if(s1+s2>3)return showAlert("report-alert","Máximo 3 mapas en Bo3.","a-err");
+  if(s1+s2>0&&s1<2&&s2<2)return showAlert("report-alert","Alguien debe ganar 2 mapas.","a-err");
+  if(S.matches.find(m=>((m.p1===p1&&m.p2===p2)||(m.p1===p2&&m.p2===p1))&&m.div===div))return showAlert("report-alert","Ya existe esa partida.","a-err");
+  S.matches.push({id:S.nid++,div,p1,p2,s1,s2});
+  document.getElementById("score1").value=0;document.getElementById("score2").value=0;
+  updateSelects();showAlert("report-alert",'✅ Partida registrada: '+pname(p1)+' '+s1+'-'+s2+' '+pname(p2),'a-ok',4000);
+  editingId=null;renderMatchLog();renderStandings();
+  setHistDiv(div);
+  setTimeout(function(){var outer=document.getElementById('mlog-outer');if(outer)outer.scrollIntoView({behavior:'smooth',block:'start'});},400);
+}
+
+function setHistDiv(d){
+  histDiv=d;
+  ["1","2","3"].forEach(id=>{const c=document.getElementById("hchip-"+id);if(!c)return;c.className=`big-div-btn${id===d?" active-"+d:""}`;});
+  renderMatchRows();
+}
+function renderMatchLog(){
+  const outer=document.getElementById("mlog-outer");
+  if(!S.matches.length){outer.style.display="none";histDiv=null;return}
+  outer.style.display="block";
+  ["1","2","3"].forEach(id=>{const c=document.getElementById("hchip-"+id);if(!c)return;c.className=`big-div-btn${id===histDiv?" active-"+id:""}`;});
+  renderMatchRows();
+}
+function renderMatchRows(){
+  const container=document.getElementById("mlog-rows");if(!container)return;
+  if(!histDiv){container.innerHTML=`<div style="font-size:13px;color:#777;padding:6px 0;text-align:center">↑ Seleccioná una división arriba para ver su historial</div>`;return;}
+  const divMatches=[...S.matches].filter(m=>m.div===histDiv).reverse();
+  const bannerCls={"1":"vb-1","2":"vb-2","3":"vb-3"}[histDiv];
+  let h=`<div class="viewing-banner ${bannerCls}">${DIV_EMOJI[histDiv]} Viendo: <strong>${DIV_LABEL[histDiv]}</strong> <span style="font-weight:400;margin-left:4px">(${divMatches.length} partida${divMatches.length!==1?"s":""})</span></div>`;
+  if(!divMatches.length){container.innerHTML=h+`<div style="font-size:13px;color:#777;padding:6px 0">No hay partidas registradas en esta división.</div>`;return;}
+  h+=`<div class="mlog-hdr"><span>Enfrentamiento</span><span class="ch">Score</span><span class="ch">Div</span><span>Ganador</span><span class="cr">•</span></div>`;
+  divMatches.forEach(m=>{
+    var win=m.s1===0&&m.s2===0?'— No jugada':m.s1>m.s2?pname(m.p1):pname(m.p2);var isEditing=editingId===m.id;
+    h+=`<div class="match-card" id="mc-${m.id}"><div class="match-row"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${pname(m.p1)} vs ${pname(m.p2)}</div><div class="mc-score">${m.s1}–${m.s2}</div><div class="mc-div">${DL[m.div]}</div><div class="mc-win">${m.s1===0&&m.s2===0?"⏸ No jugada":"↑ "+win}</div><div class="mc-act"><button class="btn-edit${isEditing?' active':''}" onclick="toggleEdit(${m.id})">${isEditing?'✕':'✎'}</button></div></div>`;
+    if(isEditing){h+=`<div class="edit-panel"><div style="font-size:12px;color:#777;margin-bottom:10px">Corregir: <strong style="color:#2C2C2A">${pname(m.p1)} vs ${pname(m.p2)}</strong></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px"><span style="font-size:13px;font-weight:600">${pname(m.p1)}</span><input type="number" id="es1" class="edit-sbox" min="0" max="2" value="${m.s1}"><span style="font-size:13px;color:#777">–</span><input type="number" id="es2" class="edit-sbox" min="0" max="2" value="${m.s2}"><span style="font-size:13px;font-weight:600">${pname(m.p2)}</span></div><div id="edit-err" style="margin-bottom:8px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-xs btn-xs-g" onclick="saveEdit(${m.id})">Guardar</button><button class="btn-xs" onclick="cancelEdit()">Cancelar</button><button class="btn-xs btn-xs-r" id="del-btn-${m.id}" onclick="confirmDelete(${m.id})">Eliminar</button></div></div>`;}
+    h+=`</div>`;
+  });
+  container.innerHTML=h;
+  if(editingId){setTimeout(()=>{const el=document.getElementById("es1");if(el){el.focus();el.select();}},50);}
+}
+function toggleEdit(id){editingId=(editingId===id)?null:id;renderMatchRows();}
+function cancelEdit(){editingId=null;renderMatchRows();}
+function saveEdit(id){
+  const s1el=document.getElementById("es1"),s2el=document.getElementById("es2"),errEl=document.getElementById("edit-err");
+  if(!s1el||!s2el)return;
+  const s1=parseInt(s1el.value)||0,s2=parseInt(s2el.value)||0;
+  const showE=msg=>{if(errEl)errEl.innerHTML=`<div class="alert a-err">${msg}</div>`;};
+  if(s1>2||s2>2)return showE("Máximo 2 mapas.");// 0-0 allowed (no show)if(s1+s2>3)return showE("Máx 3 mapas.");if(s1+s2>0&&s1<2&&s2<2)return showE("Alguien debe ganar 2.");
+  const m=S.matches.find(x=>x.id===id);if(m){m.s1=s1;m.s2=s2;}
+  editingId=null;showAlert("report-alert","Partida corregida.","a-ok");renderMatchRows();renderStandings();
+}
+function deleteMatch(id){
+  S.matches=S.matches.filter(m=>m.id!==id);editingId=null;
+  if(!S.matches.length)document.getElementById("mlog-outer").style.display="none";
+  else renderMatchRows();
+  renderStandings();
+}
+
+// ── CALENDARIO ──
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function generateRoundRobin(ids){
+  const a=[...ids];if(a.length%2!==0)a.push(null);
+  const n=a.length,allRounds=[],fixed=a[0];let rot=[...a.slice(1)];
+  for(let r=0;r<n-1;r++){
+    const pairs=[],circle=[fixed,...rot];
+    for(let i=0;i<n/2;i++){const x=circle[i],y=circle[n-1-i];if(x!==null&&y!==null)pairs.push([x,y]);}
+    allRounds.push(shuffle(pairs));rot=[rot[rot.length-1],...rot.slice(0,-1)];
+  }
+  // Combine pairs of rounds → each player plays 2 Bo3 per week
+  const weeks=[];
+  for(let i=0;i<allRounds.length;i+=2){weeks.push(shuffle([...allRounds[i],...(allRounds[i+1]||[])]));}
+  // Shuffle, then move the smallest week to the end
+  const shuffled=shuffle(weeks);
+  const minLen=Math.min(...shuffled.map(w=>w.length));
+  const minIdx=shuffled.findIndex(w=>w.length===minLen);
+  if(minIdx!==-1&&minIdx!==shuffled.length-1){
+    const [small]=shuffled.splice(minIdx,1);
+    shuffled.push(small);
+  }
+  return shuffled;
+}
+function generateCalendar(){
+  if(!isAdmin()){showCalAlert("Solo los admins pueden generar el calendario.","a-err");return;}
+  const errors=[];["1","2","3"].forEach(div=>{const n=S.players.filter(p=>p.div===div).length;if(n<MIN_PLAYERS[div])errors.push(`División ${div}: necesita ${MIN_PLAYERS[div]} (hay ${n})`);});
+  if(errors.length){showCalAlert("<b>No se puede iniciar:</b><br>"+errors.join("<br>"),"a-err");return;}
+  ["1","2","3"].forEach(div=>{
+    const ids=shuffle(S.players.filter(p=>p.div===div).map(p=>p.id));
+    S.calendar[div]=generateRoundRobin(ids).map((pairs,wi)=>pairs.map(([p1,p2])=>({week:wi+1,p1,p2})));
+  });
+  S.calendarGenerated=true;
+  document.getElementById("season-badge").innerHTML=`<span class="badge c-green">Torneo iniciado</span>`;
+  renderCalendar();renderPlayerList();
+}
+var _resetCalConfirming=false;
+function resetCalendar(){
+  if(!isAdmin()){showCalAlert("Solo los admins pueden reiniciar el calendario.","a-err");return;}
+  if(S.matches.length>0){
+    showCalAlert("Ya hay partidas registradas. No se puede reiniciar solo el calendario — usá el <strong>Reinicio total</strong> más abajo.","a-err");
+    return;
+  }
+  if(!_resetCalConfirming){
+    _resetCalConfirming=true;
+    var btn=document.querySelector('[onclick="resetCalendar()"]');
+    if(btn){
+      btn.textContent="⚠️ ¿Seguro? Confirmar";
+      btn.style.borderColor="#C4831A";
+      btn.style.color="#854F0B";
+      btn.style.background="#FAEEDA";
+    }
+    setTimeout(function(){
+      _resetCalConfirming=false;
+      var b=document.querySelector('[onclick="resetCalendar()"]');
+      if(b){b.textContent="↺ Reiniciar calendario";b.style.borderColor="";b.style.color="";b.style.background="";}
+    },3000);
+    return;
+  }
+  _resetCalConfirming=false;
+  S.calendar={"1":[],"2":[],"3":[]};S.calendarGenerated=false;
+  document.getElementById("season-badge").innerHTML="";renderCalendar();renderPlayerList();
+}
+function resetWarning(){
+  if(!isAdmin()){return;}
+  resetWarningStep++;
+  const btn=document.getElementById("reset-total-btn"),msg=document.getElementById("reset-warn-msg");
+  if(resetWarningStep===1){if(msg)msg.innerHTML=`<div class="alert a-warn" style="margin-top:10px">⚠️ <strong>Primera advertencia:</strong> Esto borrará TODO el calendario y todas las partidas. Acción irreversible. ¿Estás seguro?</div>`;if(btn){btn.textContent="Sí, continuar";btn.className="btn btn-r";}}
+  else if(resetWarningStep===2){if(msg)msg.innerHTML=`<div class="alert a-err" style="margin-top:10px">🚨 <strong>Segunda advertencia:</strong> Perderás TODOS los datos del torneo. No hay recuperación. ¿Realmente querés borrar todo?</div>`;if(btn)btn.textContent="Entiendo, borrar todo";}
+  else if(resetWarningStep>=3){S.matches=[];S.calendar={"1":[],"2":[],"3":[]};S.calendarGenerated=false;S.playoffs={d3:{p1:null,p2:null,s1:0,s2:0,done:false},d1:{p1:null,p2:null,s1:0,s2:0,done:false}};S.closed=false;S.promotions=[];S.champion=null;editingId=null;resetWarningStep=0;histDiv=null;document.getElementById("season-badge").innerHTML="";renderCalendar();renderStandings();renderMatchLog();renderPlayerList();}
+}
+function showCalAlert(msg,cls){const el=document.getElementById("cal-alert");if(el)el.innerHTML=`<div class="alert ${cls}" style="margin-bottom:12px">${msg}</div>`;}
+function renderCalendar(){
+  const el=document.getElementById("calendar-content");
+  if(!S.calendarGenerated){
+    const canGen=["1","2","3"].every(d=>S.players.filter(p=>p.div===d).length>=MIN_PLAYERS[d]);
+    let h=`<div style="font-size:15px;font-weight:700;margin-bottom:6px">Calendario del torneo</div>`;
+    h+=`<div style="font-size:13px;color:#555;margin-bottom:1.25rem">El calendario se genera al azar. Cada jugador juega <strong style="color:#2C2C2A">2 Bo3 por semana</strong>. Una vez generado no se pueden agregar más jugadores.</div>`;
+    h+=`<div id="cal-alert"></div>`;
+    h+=`<button class="btn btn-g admin-only" onclick="generateCalendar()" ${!canGen?"disabled":""} style="width:100%;padding:12px;font-size:14px">🎲 Generar calendario e iniciar torneo</button>`;
+    if(!canGen)h+=`<div style="font-size:12px;color:#777;margin-top:10px;text-align:center">Asegurate de tener el mínimo de jugadores en cada división (ver Reglas).</div>`;
+    el.innerHTML=h;return;
+  }
+  const div=S.calendarDiv;
+  // Build header + division buttons first
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:8px">
+    <div style="font-size:15px;font-weight:700">Calendario</div>
+    <button class="btn admin-only" style="font-size:12px;padding:6px 12px;white-space:nowrap" onclick="resetCalendar()">↺ Reiniciar calendario</button>
+  </div>`;
+  h+=`<div style="font-size:12px;color:#777;margin-bottom:8px">Seleccioná una división para ver su calendario</div>`;
+  h+=`<div style="display:flex;gap:8px;margin-bottom:1rem">`;
+  ["1","2","3"].forEach(d=>{const isActive=d===div;h+=`<button class="big-div-btn${isActive?" active-"+d:""}" onclick="setCalDiv('${d}')" style="flex:1"><span class="div-emoji">${DIV_EMOJI[d]}</span>${DIV_LABEL[d]}<div class="div-indicator">● Viendo</div></button>`;});
+  h+=`</div>`;
+  // If no division selected, show message and stop
+  if(!div||!S.calendar[div]){
+    h+=`<div style="font-size:13px;color:#777;text-align:center;padding:2rem 0">📅 Tocá una división para ver su calendario.</div>`;
+    el.innerHTML=h;return;
+  }
+  const playedSet=new Set(S.matches.filter(m=>m.div===div).map(m=>`${Math.min(m.p1,m.p2)}-${Math.max(m.p1,m.p2)}`));
+  const allM=S.calendar[div].flat(),total=allM.length,played=allM.filter(cm=>playedSet.has(`${Math.min(cm.p1,cm.p2)}-${Math.max(cm.p1,cm.p2)}`)).length;
+  h+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem"><span style="font-size:12px;color:#777;white-space:nowrap">${played}/${total} partidas jugadas</span><div class="pb-wrap"><div class="pb" style="width:${total>0?Math.round(played/total*100):0}%"></div></div><span style="font-size:12px;color:#777">${total>0?Math.round(played/total*100):0}%</span></div>`;
+  h+=`<div id="cal-alert"></div>`;
+  var _currentWeek=0;
+  S.calendar[div].forEach((pairs,wi)=>{
+    const wNum=wi+1,wP=pairs.filter(cm=>playedSet.has(`${Math.min(cm.p1,cm.p2)}-${Math.max(cm.p1,cm.p2)}`)).length,wDone=wP===pairs.length;
+    if(!wDone&&_currentWeek===0)_currentWeek=wNum;
+    h+=`<div class="cal-week${wDone?" done":""}"><div class="cal-week-hdr" onclick="toggleCalWeek(${wNum})"><div style="display:flex;align-items:center;gap:8px"><span class="cal-week-title">${wDone?"✅ ":""}Semana ${wNum}</span><span style="font-size:11px;color:${wDone?"#3B6D11":"#777"}">${wP}/${pairs.length} partidas</span>${wDone?'<span class="badge c-green">Semana completa</span>':''}</div><span id="cal-arr-${div}-${wNum}" style="font-size:11px;color:${wDone?"#3B6D11":"#777"}">▼</span></div><div class="cal-week-body" id="cal-body-${div}-${wNum}">`;
+    pairs.forEach(cm=>{const key=`${Math.min(cm.p1,cm.p2)}-${Math.max(cm.p1,cm.p2)}`,isP=playedSet.has(key),mr=S.matches.find(m=>((m.p1===cm.p1&&m.p2===cm.p2)||(m.p1===cm.p2&&m.p2===cm.p1))&&m.div===div);h+=`<div class="cal-match${isP?" cal-match-played":""}"><span>${pname(cm.p1)} <span style="color:#777">vs</span> ${pname(cm.p2)}</span>${isP&&mr?`<span style="font-size:12px;font-weight:600;color:#3B6D11">${mr.s1}–${mr.s2}</span>`:'<span></span>'}${isP?'<span class="cal-badge-played">✓ Jugada</span>':'<span class="cal-badge-pending">Pendiente</span>'}</div>`;});
+    h+=`</div></div>`;
+  });
+  h+=`<div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #E0DDD5"><div style="font-size:13px;font-weight:700;color:#A32D2D;margin-bottom:4px">⚠️ Zona de peligro</div><div style="font-size:12px;color:#555;margin-bottom:10px">Reinicia completamente el torneo: borra calendario y partidas. Los jugadores se mantienen.</div><button id="reset-total-btn" class="btn" style="font-size:12px;border-color:#E24B4A;color:#A32D2D" onclick="resetWarning()">🗑 Reinicio total del torneo</button><div id="reset-warn-msg"></div></div>`;
+  el.innerHTML=h;
+  // Add "En curso" badge via DOM - safe, no template literal issues
+  if(_currentWeek>0){
+    var _wHdr=document.getElementById('cal-body-'+div+'-'+_currentWeek);
+    if(_wHdr){
+      var _wHdrParent=_wHdr.parentElement;
+      if(_wHdrParent){
+        _wHdrParent.style.borderColor='#C4831A';
+        _wHdrParent.style.borderWidth='2px';
+        var _hdrDiv=_wHdrParent.querySelector('.cal-week-hdr');
+        if(_hdrDiv){
+          var _titleSpan=_hdrDiv.querySelector('.cal-week-title');
+          if(_titleSpan){
+            var _b=document.createElement('span');
+            _b.className='badge';
+            _b.style.cssText='background:#FAEEDA;color:#854F0B;font-weight:700;margin-left:6px;font-size:10px';
+            _b.textContent='En curso';
+            _titleSpan.parentNode.insertBefore(_b,_titleSpan.nextSibling);
+          }
+        }
+      }
+    }
+  }
+}
+function setCalDiv(d){S.calendarDiv=d;renderCalendar();}
+function toggleCalWeek(num){const div=S.calendarDiv,body=document.getElementById(`cal-body-${div}-${num}`),arr=document.getElementById(`cal-arr-${div}-${num}`);if(!body)return;body.classList.toggle("open");arr.textContent=body.classList.contains("open")?"▲":"▼";}
+
+function renderPlayoffs(){
+  const el=document.getElementById("playoff-content");
+  if(S.closed){renderClosed(el);return}
+  const d1done=divDone("1"),d3done=divDone("3"),pf=S.playoffs,st1=standings("1"),st3=standings("3");
+  if(d1done&&!pf.d1.p1&&st1.length>=2){pf.d1.p1=st1[0].id;pf.d1.p2=st1[1].id}
+  if(d3done&&!pf.d3.p1&&st3.length>=3){pf.d3.p1=st3[1].id;pf.d3.p2=st3[2].id}
+  let h="";
+  h+=`<div class="phase-hero" style="background:#EEEDFE;border-color:#AFA9EC;${!d1done?'border-radius:12px 12px 0 0;margin-bottom:0':''}"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><div class="phase-hero-title" style="color:#26215C">Gran Final Bo7</div><div style="font-size:12px;color:#534AB7;margin-top:2px">División 1 — los 2 mejores por el campeonato</div></div>${pf.d1.done?'<span class="badge c-purple" style="white-space:nowrap">Completada</span>':d1done?'<span class="badge c-amber" style="white-space:nowrap">Pendiente</span>':'<span class="badge" style="background:#D3D1C7;color:#555;white-space:nowrap">Esperando Div 1</span>'}</div></div>`;
+  if(!d1done){const pl=playedM("1"),tm=totalM("1"),pct=tm>0?Math.round(pl/tm*100):0;h+=`<div style="background:#E8E6F8;border-radius:0 0 12px 12px;padding:10px 16px;margin-bottom:1rem;border:1.5px solid #AFA9EC;border-top:none"><div style="font-size:12px;color:#534AB7;margin-bottom:5px">División 1 debe completarse para habilitar la final</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#534AB7;white-space:nowrap">${pl}/${tm}</span><div style="background:#C8C5EC;border-radius:6px;height:5px;flex:1;overflow:hidden"><div style="height:5px;border-radius:6px;background:#7F77DD;width:${pct}%"></div></div><span style="font-size:12px;color:#534AB7">${pct}%</span></div></div>`;}
+  else{h+=`<div class="phase-content" style="border-radius:0 0 12px 12px;border-top:none;margin-bottom:1.5rem">`;if(pf.d1.done){const w=pf.d1.s1>pf.d1.s2?pname(pf.d1.p1):pname(pf.d1.p2),lo=pf.d1.s1>pf.d1.s2?pname(pf.d1.p2):pname(pf.d1.p1);h+=`<div class="rblock"><span>${pname(pf.d1.p1)} vs ${pname(pf.d1.p2)}</span><span style="font-weight:600">${pf.d1.s1}–${pf.d1.s2}</span></div><div style="font-size:13px;margin-top:8px">Campeón: <strong style="color:#3B6D11">${w}</strong> <span class="badge c-gold" style="margin-left:4px">Campeón T${S.season}</span></div><div style="font-size:13px;margin-top:4px;color:#777">Subcampeón: ${lo}</div><button class="btn-xs" style="margin-top:10px" onclick="resetPO('d1')">Corregir</button>`;}else{h+=`<div style="font-size:13px;color:#777;margin-bottom:10px">${pname(pf.d1.p1)} vs ${pname(pf.d1.p2)}</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:13px;min-width:80px;text-align:right;color:#777">${pname(pf.d1.p1)}</span><input type="number" id="d1s1" class="sbox" min="0" max="4" value="0"><span style="color:#777">–</span><input type="number" id="d1s2" class="sbox" min="0" max="4" value="0"><span style="font-size:13px;min-width:80px;color:#777">${pname(pf.d1.p2)}</span></div><button class="btn btn-p" onclick="submitPO('d1',4)">Guardar Bo7</button>`;}h+=`</div>`;}
+  h+=`<div class="phase-hero" style="background:#E6F1FB;border-color:#85B7EB;${!d3done?'border-radius:12px 12px 0 0;margin-bottom:0':''}"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><div class="phase-hero-title" style="color:#042C53">Playoff Bo3</div><div style="font-size:12px;color:#185FA5;margin-top:2px">División 3 — 2do y 3er lugar por el segundo ascenso</div></div>${pf.d3.done?'<span class="badge c-blue" style="white-space:nowrap">Completado</span>':d3done?'<span class="badge c-amber" style="white-space:nowrap">Pendiente</span>':'<span class="badge" style="background:#D3D1C7;color:#555;white-space:nowrap">Esperando Div 3</span>'}</div></div>`;
+  if(!d3done){const pl=playedM("3"),tm=totalM("3"),pct=tm>0?Math.round(pl/tm*100):0;h+=`<div style="background:#DFF0FB;border-radius:0 0 12px 12px;padding:10px 16px;margin-bottom:1rem;border:1.5px solid #85B7EB;border-top:none"><div style="font-size:12px;color:#185FA5;margin-bottom:5px">División 3 debe completarse para habilitar el playoff</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#185FA5;white-space:nowrap">${pl}/${tm}</span><div style="background:#B5D4F4;border-radius:6px;height:5px;flex:1;overflow:hidden"><div style="height:5px;border-radius:6px;background:#378ADD;width:${pct}%"></div></div><span style="font-size:12px;color:#185FA5">${pct}%</span></div></div>`;}
+  else{h+=`<div class="phase-content" style="border-radius:0 0 12px 12px;border-top:none;margin-bottom:1.5rem">`;if(!pf.d3.p1){h+=`<div style="font-size:13px;color:#777">División 3 necesita al menos 3 jugadores.</div>`;}else if(pf.d3.done){const w=pf.d3.s1>pf.d3.s2?pname(pf.d3.p1):pname(pf.d3.p2),lo=pf.d3.s1>pf.d3.s2?pname(pf.d3.p2):pname(pf.d3.p1);h+=`<div class="rblock"><span>${pname(pf.d3.p1)} vs ${pname(pf.d3.p2)}</span><span style="font-weight:600">${pf.d3.s1}–${pf.d3.s2}</span></div><div style="font-size:13px;margin-top:8px">Ganador: <strong style="color:#3B6D11">${w}</strong> <span class="badge c-green" style="margin-left:4px">Sube a Div 2</span></div><div style="font-size:13px;margin-top:4px;color:#777">Eliminado: ${lo}</div><button class="btn-xs" style="margin-top:10px" onclick="resetPO('d3')">Corregir</button>`;}else{h+=`<div style="font-size:13px;color:#777;margin-bottom:10px">${pname(pf.d3.p1)} vs ${pname(pf.d3.p2)}</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:13px;min-width:80px;text-align:right;color:#777">${pname(pf.d3.p1)}</span><input type="number" id="d3s1" class="sbox" min="0" max="2" value="0"><span style="color:#777">–</span><input type="number" id="d3s2" class="sbox" min="0" max="2" value="0"><span style="font-size:13px;min-width:80px;color:#777">${pname(pf.d3.p2)}</span></div><button class="btn btn-b" onclick="submitPO('d3',2)">Guardar Bo3</button>`;}h+=`</div>`;}
+  const br=[];if(!divDone("1"))br.push("Div 1 incompleta");if(!divDone("2"))br.push("Div 2 incompleta");if(!divDone("3"))br.push("Div 3 incompleta");if(!pf.d1.done)br.push("Final Bo7 pendiente");if(!pf.d3.done)br.push("Playoff Bo3 pendiente");
+  const canClose=br.length===0;
+  h+=`<div class="cierre-box"><div class="cierre-hdr"><div class="cierre-hdr-icon">🏁</div><div><div class="cierre-hdr-title">Cierre de temporada ${S.season}</div><div class="cierre-hdr-sub">Ascensos, descensos y archivo permanente</div></div></div><div class="cierre-body"><div style="font-size:13px;color:#555;margin-bottom:12px">Al cerrar se aplican todos los movimientos y la temporada queda archivada.</div>`;
+  if(!canClose){h+=`<div class="alert a-warn" style="margin-bottom:12px">Pendiente: ${br.join(", ")}.</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">`;[["1","Div 1"],["2","Div 2"],["3","Div 3"]].forEach(([id,label])=>{const done=divDone(id),pl=playedM(id),tm=totalM(id);h+=`<div style="background:#F5F4F0;border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:#777;margin-bottom:4px">${label}</div><div style="font-size:12px;font-weight:600;color:${done?"#3B6D11":"#2C2C2A"}">${pl}/${tm}</div>${done?'<span class="badge c-green" style="margin-top:4px;display:inline-block">Lista</span>':'<span class="badge c-amber" style="margin-top:4px;display:inline-block">Pendiente</span>'}</div>`;});h+=`</div>`;}
+  h+=`<button class="btn btn-r" onclick="closeSeason()" ${!canClose?"disabled":""}>Cerrar temporada ${S.season} y aplicar movimientos</button></div></div>`;
+  el.innerHTML=h;
+}
+function submitPO(key,max){
+  if(!isAdmin()){showAlert("playoff-alert","Solo los admins pueden registrar resultados de playoffs.","a-err");return;}
+  const s1=parseInt(document.getElementById(`${key}s1`).value)||0,s2=parseInt(document.getElementById(`${key}s2`).value)||0;
+  if(s1+s2<1)return showAlert("playoff-alert","Al menos 1 mapa.","a-err");if(s1>max||s2>max)return showAlert("playoff-alert",`Máx ${max} mapas.`,"a-err");if(s1<max&&s2<max)return showAlert("playoff-alert",`Alguien debe ganar ${max}.`,"a-err");if(s1+s2>max*2-1)return showAlert("playoff-alert","Demasiados mapas.","a-err");
+  S.playoffs[key].s1=s1;S.playoffs[key].s2=s2;S.playoffs[key].done=true;showAlert("playoff-alert","Resultado guardado.","a-ok");renderPlayoffs();renderStandings();
+}
+function resetPO(key){if(!isAdmin())return;S.playoffs[key]={p1:S.playoffs[key].p1,p2:S.playoffs[key].p2,s1:0,s2:0,done:false};renderPlayoffs();}
+function closeSeason(){
+  if(!isAdmin()){return;}
+  const st1=standings("1"),st2=standings("2"),st3=standings("3"),pf=S.playoffs,moves=[];
+  [st1[st1.length-2],st1[st1.length-1]].filter(Boolean).forEach(p=>moves.push({id:p.id,name:p.name,from:"1",to:"2",reason:"Último en Div 1"}));
+  [st2[0],st2[1]].filter(Boolean).forEach(p=>moves.push({id:p.id,name:p.name,from:"2",to:"1",reason:"Top 2 Div 2"}));
+  [st2[st2.length-2],st2[st2.length-1]].filter(Boolean).forEach(p=>moves.push({id:p.id,name:p.name,from:"2",to:"3",reason:"Último en Div 2"}));
+  if(st3[0])moves.push({id:st3[0].id,name:st3[0].name,from:"3",to:"2",reason:"1er lugar Div 3"});
+  const d3w=pf.d3.s1>pf.d3.s2?pf.d3.p1:pf.d3.p2;if(d3w)moves.push({id:d3w,name:pname(d3w),from:"3",to:"2",reason:"Ganador playoff Bo3 Div 3"});
+  const seen=new Set(),uniq=moves.filter(m=>{if(seen.has(m.id))return false;seen.add(m.id);return true});
+  uniq.forEach(m=>{const p=S.players.find(pl=>pl.id===m.id);if(p)p.div=m.to});
+  const champId=pf.d1.s1>pf.d1.s2?pf.d1.p1:pf.d1.p2;
+  S.champion=champId;S.promotions=uniq;S.closed=true;
+  history.unshift({num:S.season,champion:{id:champId,name:pname(champId)},final:{p1n:pname(pf.d1.p1),p2n:pname(pf.d1.p2),s1:pf.d1.s1,s2:pf.d1.s2},playoff:{p1n:pname(pf.d3.p1),p2n:pname(pf.d3.p2),s1:pf.d3.s1,s2:pf.d3.s2},promotions:uniq.map(m=>({...m})),standings:{d1:st1.map(p=>({...p})),d2:st2.map(p=>({...p})),d3:st3.map(p=>({...p}))},matches:[...S.matches]});
+  document.getElementById("season-label").textContent=`Temporada ${S.season} — Cerrada`;
+  document.getElementById("season-badge").innerHTML=`<span class="badge c-amber">T${S.season} finalizada</span>`;
+  renderPlayoffs();renderStandings();
+}
+function renderClosed(el){
+  const pf=S.playoffs;
+  let h=`<div class="alert a-ok" style="margin-bottom:1rem">Temporada ${S.season} cerrada.</div>`;
+  h+=`<div class="card" style="margin-bottom:1rem"><div class="card-title">Campeón — Temporada ${S.season}</div><div style="font-size:24px;font-weight:700;color:#3B6D11;margin-bottom:6px">${pname(S.champion)}</div><div style="font-size:13px;color:#777">Gran Final Bo7: ${pname(pf.d1.p1)} ${pf.d1.s1}–${pf.d1.s2} ${pname(pf.d1.p2)}</div></div>`;
+  h+=`<div class="card" style="margin-bottom:1rem"><div class="card-title">Movimientos aplicados</div>`;
+  S.promotions.forEach(m=>{const up=parseInt(m.to)<parseInt(m.from);h+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${up?"#EAF3DE":"#FCEBEB"};margin-bottom:6px"><span style="font-size:15px;color:${up?"#3B6D11":"#A32D2D"};font-weight:700">${up?"↑":"↓"}</span><span style="font-size:13px;color:${up?"#3B6D11":"#A32D2D"};font-weight:600;flex:1">${m.name}</span><span style="font-size:12px;color:${up?"#3B6D11":"#A32D2D"}">Div ${m.from} → ${m.to}</span><span style="font-size:11px;color:#777">${m.reason}</span></div>`;});
+  h+=`</div><div class="card"><div class="card-title">Iniciar temporada ${S.season+1}</div><div style="font-size:13px;color:#555;margin-bottom:12px">Los jugadores ya están en sus nuevas divisiones.</div><button class="btn btn-g" onclick="newSeason()">Iniciar temporada ${S.season+1}</button></div>`;
+  el.innerHTML=h;
+}
+function newSeason(){
+  S.matches=[];S.playoffs={d3:{p1:null,p2:null,s1:0,s2:0,done:false},d1:{p1:null,p2:null,s1:0,s2:0,done:false}};
+  S.closed=false;S.promotions=[];S.champion=null;S.season++;editingId=null;
+  S.calendar={"1":[],"2":[],"3":[]};S.calendarGenerated=false;resetWarningStep=0;histDiv=null;
+  document.getElementById("season-label").textContent=`Temporada ${S.season} en curso`;
+  document.getElementById("season-badge").innerHTML="";
+  renderStandings();renderPlayoffs();renderMatchLog();renderCalendar();renderPlayerList();showTab("standings");
+}
+
+var editingSnap=null;
+var confirmingEditSnap=null;
+
+function renderHistory(){
+  const el=document.getElementById("history-content");
+  if(!history.length){el.innerHTML=`<div class="empty-history"><div style="font-size:36px;opacity:.3;margin-bottom:12px">📋</div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Acá podrás visualizar el historial de las temporadas</div><div style="font-size:13px">Una vez que cierres la primera temporada aparecerá el registro completo.</div></div>`;return;}
+  let h="";
+  history.forEach(function(snap){
+    var isEditing=editingSnap===snap.num;
+    var isConfirming=confirmingEditSnap===snap.num;
+    var btnLabel=isEditing?'✕ Cancelar':isConfirming?'⚠️ Confirmar':'✎ Editar';
+    var btnStyle=isEditing?' active':isConfirming?' style="background:#FAEEDA;border-color:#C4831A;color:#633806"':'';
+    h+='<div class="hs-item"><div class="hs-hdr" onclick="toggleHS('+snap.num+')"><div style="display:flex;align-items:center;gap:10px"><span>Temporada '+snap.num+'</span><span class="badge c-gold">Campeón: '+snap.champion.name+'</span></div><div style="display:flex;align-items:center;gap:16px"><span id="hs-arr-'+snap.num+'" style="font-size:18px;color:#aaa;padding:0 4px">▼</span><button class="btn-edit-season'+btnStyle+'" onclick="event.stopPropagation();toggleEditSnap('+snap.num+')">'+btnLabel+'</button></div></div>';
+    if(isConfirming&&!isEditing){h+='<div style="background:#FAEEDA;border-top:1px solid #D4924A;padding:10px 14px;font-size:12px;color:#633806;display:flex;align-items:center;gap:8px">⚠️ <span>¿Seguro que querés editar una temporada ya finalizada? Los cambios son solo visuales.</span><button class="btn-edit-season" onclick="event.stopPropagation();confirmingEditSnap=null;renderHistory()" style="margin-left:auto;white-space:nowrap">✕ No</button></div>';}
+    h+='<div class="hs-body" id="hs-body-'+snap.num+'">';
+
+    if(isEditing){
+      // Edit panel
+      h+='<div class="edit-season-panel">';
+      h+='<div style="font-size:13px;font-weight:600;color:#2C2C2A;margin-bottom:14px">✎ Editando Temporada '+snap.num+'</div>';
+
+      // Final Bo7
+      h+='<label>Gran Final Bo7</label>';
+      h+='<div class="edit-row"><span style="font-size:13px;font-weight:500;min-width:70px;text-align:right">'+snap.final.p1n+'</span><input type="number" id="es-f-s1-'+snap.num+'" class="edit-sbox" min="0" max="4" value="'+snap.final.s1+'"><span style="color:#777">–</span><input type="number" id="es-f-s2-'+snap.num+'" class="edit-sbox" min="0" max="4" value="'+snap.final.s2+'"><span style="font-size:13px;font-weight:500">'+snap.final.p2n+'</span></div>';
+
+      // Playoff Bo3
+      h+='<label>Playoff Bo3 – División 3</label>';
+      h+='<div class="edit-row"><span style="font-size:13px;font-weight:500;min-width:70px;text-align:right">'+snap.playoff.p1n+'</span><input type="number" id="es-p-s1-'+snap.num+'" class="edit-sbox" min="0" max="2" value="'+snap.playoff.s1+'"><span style="color:#777">–</span><input type="number" id="es-p-s2-'+snap.num+'" class="edit-sbox" min="0" max="2" value="'+snap.playoff.s2+'"><span style="font-size:13px;font-weight:500">'+snap.playoff.p2n+'</span></div>';
+
+      h+='<div id="es-err-'+snap.num+'" style="margin-bottom:8px"></div>';
+      h+='<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-g" onclick="saveSnapEdit('+snap.num+')">Guardar cambios</button><button class="btn" onclick="toggleEditSnap('+snap.num+')">Cancelar</button></div>';
+      h+='</div>';
+    }
+
+    // Always show the data
+    h+='<div style="padding:14px">';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:6px">Gran Final Bo7</div><div class="rblock" style="margin-bottom:12px"><span>'+snap.final.p1n+' vs '+snap.final.p2n+'</span><span style="font-weight:600">'+snap.final.s1+'–'+snap.final.s2+'</span><span style="color:#3B6D11;font-weight:600">Campeón: '+snap.champion.name+'</span></div>';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:6px">Playoff Bo3 Div 3</div><div class="rblock" style="margin-bottom:12px"><span>'+snap.playoff.p1n+' vs '+snap.playoff.p2n+'</span><span style="font-weight:600">'+snap.playoff.s1+'–'+snap.playoff.s2+'</span></div>';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:6px">Movimientos</div>';
+    snap.promotions.forEach(function(m){var up=parseInt(m.to)<parseInt(m.from);h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:'+(up?'#EAF3DE':'#FCEBEB')+';margin-bottom:5px;font-size:12px"><span style="color:'+(up?'#3B6D11':'#A32D2D')+';font-weight:600">'+(up?'↑':'↓')+' '+m.name+'</span><span style="flex:1"></span><span style="color:'+(up?'#3B6D11':'#A32D2D')+'">Div '+m.from+' → '+m.to+'</span></div>';});
+    h+='<div style="font-size:13px;font-weight:600;margin:12px 0 8px">Posiciones finales</div>';
+    [["d1","División 1"],["d2","División 2"],["d3","División 3"]].forEach(function(pair){
+      var key=pair[0],label=pair[1];
+      var st=snap.standings[key];if(!st||!st.length)return;
+      h+='<div style="font-size:12px;font-weight:600;color:#777;margin:8px 0 4px">'+label+'</div><table class="st-table" style="font-size:12px;margin-bottom:4px"><colgroup><col style="width:24px"><col><col style="width:40px"><col style="width:36px"><col style="width:30px"><col style="width:30px"></colgroup><thead><tr><th>#</th><th>Jugador</th><th class="r">Pts</th><th class="r">PJ</th><th class="r">G</th><th class="r">P</th></tr></thead><tbody>';
+      st.forEach(function(p,i){h+='<tr class="pr"><td style="font-weight:600">'+(i+1)+'</td><td>'+p.name+'</td><td class="r" style="font-weight:600">'+p.pts+'</td><td class="r" style="color:#777">'+p.played+'</td><td class="r" style="color:#3B6D11">'+p.wins+'</td><td class="r" style="color:#A32D2D">'+p.losses+'</td></tr>';});
+      h+='</tbody></table>';
+    });
+    h+='</div>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+  // Reopen panels that were open
+  history.forEach(function(snap){
+    var body=document.getElementById('hs-body-'+snap.num);
+    if(body&&snap._open)body.classList.add('open');
+  });
+}
+
+function toggleHS(num){
+  var body=document.getElementById('hs-body-'+num),arr=document.getElementById('hs-arr-'+num);
+  body.classList.toggle("open");
+  arr.textContent=body.classList.contains("open")?"▲":"▼";
+  var snap=history.find(function(s){return s.num===num;});
+  if(snap)snap._open=body.classList.contains("open");
+}
+
+var confirmingEditSnap=null;
+
+function toggleEditSnap(num){
+  if(!isAdmin()){return;}
+  if(editingSnap===num){
+    // Cancel edit
+    editingSnap=null;
+    confirmingEditSnap=null;
+    renderHistory();
+    return;
+  }
+  if(confirmingEditSnap===num){
+    // Second click confirmed - open editor
+    editingSnap=num;
+    confirmingEditSnap=null;
+    var snap=history.find(function(s){return s.num===num;});
+    if(snap)snap._open=true;
+    renderHistory();
+    return;
+  }
+  // First click - ask for confirmation
+  confirmingEditSnap=num;
+  var snap=history.find(function(s){return s.num===num;});
+  if(snap)snap._open=true;
+  renderHistory();
+}
+
+function saveSnapEdit(num){
+  if(!isAdmin()){return;}
+  var snap=history.find(function(s){return s.num===num;});
+  if(!snap)return;
+  var fs1=parseInt(document.getElementById('es-f-s1-'+num).value)||0;
+  var fs2=parseInt(document.getElementById('es-f-s2-'+num).value)||0;
+  var ps1=parseInt(document.getElementById('es-p-s1-'+num).value)||0;
+  var ps2=parseInt(document.getElementById('es-p-s2-'+num).value)||0;
+  var errEl=document.getElementById('es-err-'+num);
+  function showE(msg){errEl.innerHTML='<div class="alert a-err">'+msg+'</div>';}
+
+  // Validate final
+  if(fs1+fs2<1)return showE("Final: ingresá al menos 1 mapa.");
+  if(fs1>4||fs2>4)return showE("Final Bo7: máximo 4 mapas por jugador.");
+  if(fs1<4&&fs2<4)return showE("Final Bo7: alguien debe ganar 4 mapas.");
+  if(fs1+fs2>7)return showE("Final Bo7: máximo 7 mapas en total.");
+  // Validate playoff
+  if(ps1+ps2>0){
+    if(ps1>2||ps2>2)return showE("Playoff Bo3: máximo 2 mapas por jugador.");
+    if(ps1<2&&ps2<2)return showE("Playoff Bo3: alguien debe ganar 2 mapas.");
+    if(ps1+ps2>3)return showE("Playoff Bo3: máximo 3 mapas en total.");
+  }
+
+  // Apply changes
+  snap.final.s1=fs1; snap.final.s2=fs2;
+  snap.playoff.s1=ps1; snap.playoff.s2=ps2;
+  // Update champion
+  var newChamp=fs1>fs2?snap.final.p1n:snap.final.p2n;
+  snap.champion={name:newChamp};
+  // Update playoff winner in promotions if relevant
+  var oldPoWinner=ps1>ps2?snap.playoff.p1n:snap.playoff.p2n;
+  snap._open=true;
+  editingSnap=null;
+  renderHistory();
+}
+
+function addPlayer(){
+  if(!isAdmin()){showAlert("new-name-alert","Solo los admins pueden agregar jugadores.","a-err");return;}
+  if(S.calendarGenerated)return;
+  const n=document.getElementById("new-name").value.trim(),d=document.getElementById("new-div").value;
+  if(!n){const el=document.getElementById("new-name");el.style.borderColor="#E24B4A";setTimeout(()=>el.style.borderColor="",1500);return;}
+  const dup=S.players.find(p=>p.name.toLowerCase()===n.toLowerCase());
+  if(dup){showAlert("new-name-alert",`Ya existe "${dup.name}" en ${DIV_LABEL[dup.div]}.`,"a-err");return;}
+  S.players.push({id:S.nid++,name:n,div:d});
+  document.getElementById("new-name").value="";document.getElementById("new-name").focus();
+  renderPlayerList();renderStandings();renderCalendar();
+}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.activeElement===document.getElementById("new-name"))addPlayer();});
+function removePlayer(id){
+  if(!isAdmin()){return;}
+  if(S.calendarGenerated)return;
+  S.players=S.players.filter(p=>p.id!==id);S.matches=S.matches.filter(m=>m.p1!==id&&m.p2!==id);
+  renderPlayerList();renderStandings();renderCalendar();
+}
+var playerDivOpen={"1":false,"2":false,"3":false};
+function togglePlayerDiv(div){
+  playerDivOpen[div]=!playerDivOpen[div];
+  renderPlayerList();
+}
+function renderPlayerList(){
+  var dbl={"1":"c-gold","2":"c-silver","3":"c-bronze"};
+  var sorted=sortedPlayers();
+  var byDiv={"1":[],"2":[],"3":[]};
+  sorted.forEach(function(p){ byDiv[p.div].push(p); });
+  var html="";
+  ["1","2","3"].forEach(function(d){
+    var players=byDiv[d];
+    if(!players.length) return;
+    var open=playerDivOpen[d];
+    html+='<div style="border:1px solid #E0DDD5;border-radius:10px;margin-bottom:8px;overflow:hidden">';
+    html+='<div onclick="togglePlayerDiv(&quot;'+d+'&quot;)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#F5F4F0;cursor:pointer;user-select:none">';
+    html+='<div style="display:flex;align-items:center;gap:8px">';
+    html+='<span style="font-size:12px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.04em">'+DIV_LABEL[d]+'</span>';
+    html+='<span class="badge '+dbl[d]+'">'+players.length+' jug.</span>';
+    html+='</div>';
+    html+='<div style="width:24px;height:24px;border-radius:6px;background:#ECEAE4;display:flex;align-items:center;justify-content:center;font-size:11px;color:#777">'+(open?'&#9650;':'&#9660;')+'</div>';
+    html+='</div>';
+    if(open){
+      html+='<div style="padding:8px 10px">';
+      players.forEach(function(p){
+        var rm=S.calendarGenerated?'':'<button class="rm-btn" onclick="removePlayer('+p.id+')">&#10005;</button>';
+        html+='<div class="pitem"><span style="font-weight:500">'+p.name+' <span class="badge '+dbl[p.div]+'" style="margin-left:6px">Div '+p.div+'</span></span>'+rm+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById("player-list").innerHTML=html||'<div style="font-size:13px;color:#777;padding:4px 0">Sin jugadores.</div>';
+  document.getElementById("stat-p").textContent=S.players.length;
+  document.getElementById("stat-m").textContent=S.matches.length;
+  document.getElementById("stat-mp").textContent=S.matches.reduce(function(a,m){return a+m.s1+m.s2;},0);
+  var locked=S.calendarGenerated;
+  var addForm=document.getElementById("players-add-form"),lockedMsg=document.getElementById("players-locked-msg");
+  if(addForm)addForm.style.display=locked?"none":"block";
+  if(lockedMsg)lockedMsg.style.display=locked?"block":"none";
+}
+
+function showAlert(id,msg,cls,dur){var el=document.getElementById(id);if(!el)return;el.innerHTML='<div class="alert '+cls+'">'+msg+'</div>';setTimeout(function(){if(el)el.innerHTML='';},dur||4000);}
+
+function exportCSV(){const rows=[["División","Pos","Jugador","Puntos","PJ","Ganados","Perdidos"]];["1","2","3"].forEach(div=>standings(div).forEach((p,i)=>rows.push([`División ${div}`,i+1,p.name,p.pts,p.played,p.wins,p.losses])));dlFile("torneo_sc2_T"+S.season+".csv",rows.map(r=>r.join(",")).join("\n"),"text/csv");}
+function exportJSON(){const data={temporada:S.season,cerrada:S.closed,campeon:pname(S.champion),divisiones:["1","2","3"].map(div=>({division:div,jugadores:standings(div)})),partidas:S.matches.map(m=>({...m,p1_name:pname(m.p1),p2_name:pname(m.p2)})),movimientos:S.promotions};dlFile("torneo_sc2_T"+S.season+".json",JSON.stringify(data,null,2),"application/json");}
+function dlFile(name,content,type){const a=document.createElement("a");a.href="data:"+type+";charset=utf-8,"+encodeURIComponent(content);a.download=name;a.click();}
+
+function showTab(tab){
+  ALL_TABS.forEach(t=>{document.getElementById("tab-"+t).style.display=t===tab?"block":"none";});
+  ALL_TABS.forEach(t=>{const btn=document.getElementById("tab-btn-"+t);if(btn)btn.classList.toggle("active",t===tab);});
+  if(tab==="players")renderPlayerList();
+  if(tab==="report")renderMatchLog();
+  if(tab==="playoffs")renderPlayoffs();
+  if(tab==="calendar"){resetWarningStep=0;renderCalendar();}
+  if(tab==="history")renderHistory();
+  sessionStorage.setItem("sc2_tab", tab);
+}
+// Clear 0 on focus, restore 0 on blur for score inputs
+document.addEventListener('focus', function(e) {
+  if (e.target.classList.contains('sbox')) {
+    // Register form: clear 0 on focus
+    if (e.target.value === '0') { e.target.value = ''; }
+    e.target.select();
+  } else if (e.target.classList.contains('edit-sbox')) {
+    // Edit form: just select all so user can overwrite easily, but keep the value visible
+    e.target.select();
+  }
+}, true);
+document.addEventListener('blur', function(e) {
+  if (e.target.classList.contains('sbox')) {
+    if (e.target.value === '') { e.target.value = '0'; }
+  } else if (e.target.classList.contains('edit-sbox')) {
+    if (e.target.value === '') { e.target.value = '0'; }
+  }
+}, true);
+
+function confirmDelete(id) {
+  const btn = document.getElementById('del-btn-' + id);
+  if (!btn) return;
+  if (btn.dataset.confirming === '1') {
+    // Second click - actually delete
+    deleteMatch(id);
+  } else {
+    // First click - ask for confirmation
+    btn.dataset.confirming = '1';
+    btn.textContent = '¿Seguro? Confirmar';
+    btn.style.background = '#A32D2D';
+    btn.style.color = '#fff';
+    btn.style.borderColor = '#A32D2D';
+    // Auto-reset after 3 seconds if no second click
+    setTimeout(() => {
+      if (btn && btn.dataset.confirming === '1') {
+        btn.dataset.confirming = '0';
+        btn.textContent = 'Eliminar';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }
+    }, 3000);
+  }
+}
+
+
+// ── AUTH ──
+var currentRole = null; // 'admin' | 'player'
+var ADMIN_USER = 'Admin';
+var ADMIN_PASS = 'AdminSC2';
+
+function loginPlayer() {
+  currentRole = 'player';
+  sessionStorage.setItem('sc2_role', 'player');
+  document.getElementById('login-screen').classList.add('hidden');
+  applyRoleUI();
+}
+
+function loginAdmin() {
+  var u = document.getElementById('admin-user').value.trim();
+  var p = document.getElementById('admin-pass').value;
+  var err = document.getElementById('login-err');
+  if(u === ADMIN_USER && p === ADMIN_PASS) {
+    currentRole = 'admin';
+    sessionStorage.setItem('sc2_role', 'admin');
+    document.getElementById('login-screen').classList.add('hidden');
+    applyRoleUI();
+  } else {
+    err.textContent = 'Usuario o contraseña incorrectos.';
+    document.getElementById('admin-pass').value = '';
+    setTimeout(function(){err.textContent='';}, 3000);
+  }
+}
+
+function logout() {
+  currentRole = null;
+  sessionStorage.removeItem('sc2_role');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-user').value = '';
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('role-badge-container').innerHTML = '';
+}
+
+// Restore session on page load/refresh
+function restoreSession() {
+  var saved = sessionStorage.getItem('sc2_role');
+  if(saved === 'player' || saved === 'admin') {
+    currentRole = saved;
+    var ls = document.getElementById('login-screen');
+    if(ls) ls.classList.add('hidden');
+    applyRoleUI();
+    var t = sessionStorage.getItem('sc2_tab');
+    if(t && ALL_TABS.indexOf(t) > -1) showTab(t);
+  }
+}
+setTimeout(restoreSession, 100);
+
+function applyRoleUI() {
+  var isAdmin = currentRole === 'admin';
+  var badge = document.getElementById('role-badge-container');
+  badge.innerHTML = '<div class="role-badge '+(isAdmin?'role-badge-admin':'role-badge-player')+'" onclick="logout()" title="Toca para cerrar sesión">'+(isAdmin?'👑 Admin':'🎮 Jugador')+'</div>';
+
+  // Show/hide admin-only elements
+  var adminEls = document.querySelectorAll('.admin-only');
+  adminEls.forEach(function(el){ el.style.display = isAdmin ? '' : 'none'; });
+
+  // Show/hide player-blocked elements  
+  var playerBlocked = document.querySelectorAll('.player-blocked');
+  playerBlocked.forEach(function(el){ el.style.display = isAdmin ? '' : 'none'; });
+}
+
+function isAdmin(){ return currentRole === 'admin'; }
+
+// ── FIREBASE ──
+var db = null;
+
+function initFirebase() {
+  if(typeof firebase === 'undefined') {
+    console.warn('Firebase no disponible - modo offline');
+    renderStandings();
+    renderCalendar();
+    return;
+  }
+  try {
+    var firebaseConfig = {
+      apiKey: "AIzaSyBFQWUlKdd3gKS9O5SxZtZVLFjXnUUMdmo",
+      authDomain: "liga-tica---divisiones-sc2.firebaseapp.com",
+      databaseURL: "https://liga-tica---divisiones-sc2-default-rtdb.firebaseio.com",
+      projectId: "liga-tica---divisiones-sc2",
+      storageBucket: "liga-tica---divisiones-sc2.firebasestorage.app",
+      messagingSenderId: "637620563356",
+      appId: "1:637620563356:web:c2208431be15bac8ed6c59"
+    };
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+
+    // Load data once on startup
+    var ind = document.getElementById('sync-indicator');
+    if(ind){ ind.textContent='🔄 Cargando...'; ind.style.color='#854F0B'; }
+    
+    db.ref('torneo').once('value').then(function(snap) {
+      var data = snap.val();
+      if(data && data.S && (data.S.players && data.S.players.length > 0)) {
+        S.players    = data.S.players    || [];
+        S.matches    = data.S.matches    || [];
+        S.playoffs   = data.S.playoffs   || {d3:{p1:null,p2:null,s1:0,s2:0,done:false},d1:{p1:null,p2:null,s1:0,s2:0,done:false}};
+        S.closed     = data.S.closed     !== undefined ? data.S.closed : false;
+        S.promotions = data.S.promotions || [];
+        S.champion   = data.S.champion   !== undefined ? data.S.champion : null;
+        S.nid        = data.S.nid        || 1;
+        S.season     = data.S.season     || 1;
+        S.calendarGenerated = data.S.calendarGenerated || false;
+        S.calendar   = data.S.calendar   || {"1":[],"2":[],"3":[]};
+        S.calendarDiv = ""; // Always start with no division selected
+      }
+      if(data && data.history && data.history.length > 0) {
+        history = data.history;
+      }
+      var lbl = document.getElementById('season-label');
+      if(lbl) lbl.textContent = S.closed ? 'Temporada '+S.season+' — Cerrada' : 'Temporada '+S.season+' en curso';
+      if(ind){ ind.textContent='✓ Datos cargados'; ind.style.color='#3B6D11'; setTimeout(function(){ind.textContent='';},2000); }
+      renderStandings();
+      renderCalendar();
+    }).catch(function(e) {
+      console.error('Firebase load error:', e);
+      if(ind){ ind.textContent='⚠ Sin conexión'; ind.style.color='#A32D2D'; }
+      renderStandings();
+      renderCalendar();
+    });
+
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    renderStandings();
+    renderCalendar();
+  }
+}
+
+function saveToFirebase() {
+  if(!db) return;
+  var ind = document.getElementById('sync-indicator');
+  if(ind){ ind.textContent='💾 Guardando...'; ind.style.color='#854F0B'; }
+  var data = {
+    S: {
+      players: S.players, matches: S.matches, playoffs: S.playoffs,
+      closed: S.closed, promotions: S.promotions, champion: S.champion,
+      nid: S.nid, season: S.season, calendarGenerated: S.calendarGenerated,
+      calendar: S.calendar, calendarDiv: S.calendarDiv
+    },
+    history: history
+  };
+  db.ref('torneo').set(data).then(function(){
+    if(ind){ ind.textContent='✓ Guardado'; ind.style.color='#3B6D11'; setTimeout(function(){ind.textContent='';},2000); }
+  }).catch(function(e){
+    console.error('Save error:',e);
+    if(ind){ ind.textContent='⚠ Error al guardar'; ind.style.color='#A32D2D'; }
+  });
+}
+
+
+// ── AUTO-SAVE PATCHES ──
+var _origSubmitMatch = submitMatch;
+submitMatch = function() { _origSubmitMatch(); saveToFirebase(); };
+
+var _origAddPlayer = addPlayer;
+addPlayer = function() { _origAddPlayer(); saveToFirebase(); };
+
+var _origRemovePlayer = removePlayer;
+removePlayer = function(id) { _origRemovePlayer(id); saveToFirebase(); };
+
+var _origDeleteMatch = deleteMatch;
+deleteMatch = function(id) { _origDeleteMatch(id); saveToFirebase(); };
+
+var _origSaveEdit = saveEdit;
+saveEdit = function(id) { _origSaveEdit(id); saveToFirebase(); };
+
+var _origCloseSeason = closeSeason;
+closeSeason = function() { _origCloseSeason(); saveToFirebase(); };
+
+var _origNewSeason = newSeason;
+newSeason = function() { _origNewSeason(); saveToFirebase(); };
+
+var _origGenerateCalendar = generateCalendar;
+generateCalendar = function() { _origGenerateCalendar(); saveToFirebase(); };
+
+var _origResetCalendar = resetCalendar;
+resetCalendar = function() { _origResetCalendar(); saveToFirebase(); };
+
+var _origSubmitPO = submitPO;
+submitPO = function(key, max) { _origSubmitPO(key, max); saveToFirebase(); };
+
+var _origSaveSnapEdit = saveSnapEdit;
+saveSnapEdit = function(num) { _origSaveSnapEdit(num); saveToFirebase(); };
+
+var _origResetWarning = resetWarning;
+resetWarning = function() { _origResetWarning(); saveToFirebase(); };
+
+// ── INITIAL LOAD ──
+// Firebase scripts load from CDN, so we wait for them
+var _fbCheckCount = 0;
+function _waitForFirebase() {
+  if(typeof firebase !== 'undefined') {
+    initFirebase();
+  } else if(_fbCheckCount < 20) {
+    _fbCheckCount++;
+    setTimeout(_waitForFirebase, 200);
+  } else {
+    console.warn('Firebase timeout - running offline');
+    renderStandings();
+    renderCalendar();
+  }
+}
+_waitForFirebase();
+</script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<div class="scroll-hint hidden" id="scroll-hint">
+  <span class="scroll-arrow">↓</span>
+  <span>Div 2 y Div 3 abajo</span>
+  <span class="scroll-arrow">↓</span>
+</div>
+<script>
+(function(){
+  var hint = document.getElementById('scroll-hint');
+  if(!hint) return;
+  // Only show on standings tab
+  function checkScroll(){
+    if(window.scrollY > 60){
+      hint.classList.add('hidden');
+    } else {
+      // Only show if standings tab is active
+      var standingsTab = document.getElementById('tab-standings');
+      if(standingsTab && standingsTab.style.display !== 'none'){
+        hint.classList.remove('hidden');
+      } else {
+        hint.classList.add('hidden');
+      }
+    }
+  }
+  window.addEventListener('scroll', checkScroll, {passive:true});
+  // Hide when switching tabs
+  document.querySelectorAll('.tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      setTimeout(checkScroll, 50);
+    });
+  });
+  // Initial check after data loads
+  setTimeout(checkScroll, 1500);
+})();
+</script>
+</body>
+</html>
